@@ -21,6 +21,7 @@ import clojure.asm.commons.Method;
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -1027,7 +1028,7 @@ static public abstract class HostExpr implements Expr, MaybePrimitiveExpr{
 	}
 
 	public static Class maybeClass(Object form, boolean stringOk) {
-		if(form instanceof Class)
+		if(form instanceof Class){
 			return (Class) form;
 		Class c = null;
 		if(form instanceof Symbol)
@@ -1059,7 +1060,11 @@ static public abstract class HostExpr implements Expr, MaybePrimitiveExpr{
 					}
 				}
 			}
-		else if(stringOk && form instanceof String)
+		else if (form instanceof IPersistentVector) {
+        Class instanceClass = tagClass(RT.first(form));
+        instanceClass = instanceClass == null ? new Object().getClass() : instanceClass;
+        c = Array.newInstance(instanceClass, 0).getClass();
+		} else if(stringOk && form instanceof String)
 			c = RT.classForNameNonLoading((String) form);
 		return c;
 	}

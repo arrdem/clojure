@@ -930,48 +930,53 @@ static class ArgReader extends AFn{
 	}
 }
 
-public static class MetaReader extends AFn{
-	public Object invoke(Object reader, Object caret, Object opts, Object pendingForms) {
-		PushbackReader r = (PushbackReader) reader;
-		int line = -1;
-		int column = -1;
-		if(r instanceof LineNumberingPushbackReader)
-			{
-			line = ((LineNumberingPushbackReader) r).getLineNumber();
-			column = ((LineNumberingPushbackReader) r).getColumnNumber()-1;
-			}
-		pendingForms = ensurePending(pendingForms);
-		Object meta = read(r, true, null, true, opts, pendingForms);
-		if(meta instanceof Symbol || meta instanceof String)
-			meta = RT.map(RT.TAG_KEY, meta);
-		else if (meta instanceof Keyword)
-			meta = RT.map(meta, RT.T);
-		else if(!(meta instanceof IPersistentMap))
-			throw new IllegalArgumentException("Metadata must be Symbol,Keyword,String or Map");
+public static class MetaReader extends AFn {
+  public Object invoke(Object reader, Object caret, Object opts, Object pendingForms) {
+    PushbackReader r = (PushbackReader) reader;
+    int line = -1;
+    int column = -1;
 
-		Object o = read(r, true, null, true, opts, pendingForms);
-		if(o instanceof IMeta)
-			{
-			if(line != -1 && o instanceof ISeq)
-				{
-				meta = ((IPersistentMap) meta).assoc(RT.LINE_KEY, line).assoc(RT.COLUMN_KEY, column);
-				}
-			if(o instanceof IReference)
-				{
-				((IReference)o).resetMeta((IPersistentMap) meta);
-				return o;
-				}
-			Object ometa = RT.meta(o);
-			for(ISeq s = RT.seq(meta); s != null; s = s.next()) {
-			IMapEntry kv = (IMapEntry) s.first();
-			ometa = RT.assoc(ometa, kv.getKey(), kv.getValue());
-			}
-			return ((IObj) o).withMeta((IPersistentMap) ometa);
-			}
-		else
-			throw new IllegalArgumentException("Metadata can only be applied to IMetas");
-	}
+    if (r instanceof LineNumberingPushbackReader) {
+      line = ((LineNumberingPushbackReader) r).getLineNumber();
+      column = ((LineNumberingPushbackReader) r).getColumnNumber()-1;
+    }
+    pendingForms = ensurePending(pendingForms);
+    Object meta = read(r, true, null, true, opts, pendingForms);
+    if(meta instanceof Symbol || meta instanceof String) {
+      meta = RT.map(RT.TAG_KEY, meta);
+    } else if (meta instanceof Keyword) {
+      meta = RT.map(meta, RT.T);
+    } else if (meta instanceof IPersistentVector) {
+      if (RT.length(RT.seq(meta)) != 1) {
+        throw new IllegalStateException("Vector tag metadata must be length 1");
+      } else {
+        meta = RT.map(RT.TAG_KEY, meta);
+      }
+    } else if (!(meta instanceof IPersistentMap)) {
+      throw new IllegalArgumentException("Metadata must be Symbol, Keyword, String, Vector or Map");
+    }
+    Object o = read(r, true, null, true, opts, pendingForms);
+    if (o instanceof IMeta) {
+      if (line != -1 && o instanceof ISeq) {
+        meta = ((IPersistentMap) meta).assoc(RT.LINE_KEY, line).assoc(RT.COLUMN_KEY, column);
+      }
 
+      if (o instanceof IReference)	{
+        ((IReference)o).resetMeta((IPersistentMap) meta);
+        return o;
+      }
+
+      Object ometa = RT.meta(o);
+      for(ISeq s = RT.seq(meta); s != null; s = s.next()) {
+        IMapEntry kv = (IMapEntry) s.first();
+        ometa = RT.assoc(ometa, kv.getKey(), kv.getValue());
+      }
+
+      return ((IObj) o).withMeta((IPersistentMap) ometa);
+    } else {
+      throw new IllegalArgumentException("Metadata can only be applied to IMetas");
+    }
+  }
 }
 
 public static class SyntaxQuoteReader extends AFn{
