@@ -5,7 +5,7 @@
   <artifactId>clojure</artifactId>
   <name>clojure</name>
   <packaging>jar</packaging>
-  <version>1.10.0-master-SNAPSHOT</version>
+  <version>1.10.0-SNAPSHOT</version>
 
   <url>http://clojure.org/</url>
   <description>Clojure core environment and runtime library.</description>
@@ -15,6 +15,11 @@
       <name>Rich Hickey</name>
       <email>richhickey@gmail.com</email>
       <timezone>-5</timezone>
+    </developer>
+    <developer>
+      <name>Reid McKenzie</name>
+      <email>me@arrdem.com</email>
+      <timezone>-8</timezone>
     </developer>
   </developers>
 
@@ -27,14 +32,24 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:git@github.com:clojure/clojure.git</connection>
-    <developerConnection>scm:git:git@github.com:clojure/clojure.git</developerConnection>
-    <url>git@github.com:clojure/clojure.git</url>
+    <connection>scm:git:git@github.com:arrdem/clojure.git</connection>
+    <developerConnection>scm:git:git@github.com:arrdem/clojure.git</developerConnection>
+    <url>git@github.com:arrdem/clojure.git</url>
     <tag>HEAD</tag>
   </scm>
 
+  <distributionManagement>
+    <repository>
+      <id>clojars</id>
+      <name>Clojars repository</name>
+      <url>https://clojars.org/repo</url>
+    </repository>
+  </distributionManagement>
+
   <properties>
     <directlinking>true</directlinking>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
   <dependencies>
@@ -80,67 +95,59 @@
     </dependency>
   </dependencies>
 
-  <distributionManagement>
-    <snapshotRepository>
-      <!-- This id is linked to the key setup on the CI server -->
-      <id>sonatype-nexus-staging</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-  </distributionManagement>
-
   <build>
     <resources>
       <resource>
-	<directory>src/resources</directory>
-	<filtering>true</filtering>
+        <directory>src/resources</directory>
+        <filtering>true</filtering>
       </resource>
       <resource>
-	<directory>src/clj</directory>
+        <directory>src/clj</directory>
       </resource>
     </resources>
     <testSourceDirectory>test/java</testSourceDirectory>
     <plugins>
       <plugin>
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-compiler-plugin</artifactId>
-	<version>3.1</version>
-	<configuration>
-	  <source>1.8</source>
-	  <target>1.8</target>
-	  <encoding>UTF-8</encoding>
-	</configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
       </plugin>
       <plugin>
-	<artifactId>maven-antrun-plugin</artifactId>
-	<version>1.6</version>
-	<executions>
-	  <execution>
-	    <id>clojure-compile</id>
-	    <phase>compile</phase>
-	    <goals>
-	      <goal>run</goal>
-	    </goals>
-	    <configuration>
-	      <target>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <id>clojure-compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
                 <property name="maven.compile.classpath" refid="maven.compile.classpath" />
-		<ant target="compile-clojure" />
-	      </target>
-	    </configuration>
-	  </execution>
-	  <execution>
-	    <id>clojure-test</id>
-	    <phase>test</phase>
-	    <goals>
-	      <goal>run</goal>
-	    </goals>
-	    <configuration>
-	      <target>
+                <ant target="compile-clojure" />
+              </target>
+            </configuration>
+          </execution>
+          <execution>
+            <id>clojure-test</id>
+            <phase>test</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
                 <property name="maven.test.classpath" refid="maven.test.classpath" />
-		<ant target="test" />
-	      </target>
-	    </configuration>
-	  </execution>
-	</executions>
+                <ant target="test" />
+              </target>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -155,84 +162,84 @@
             </goals>
             <configuration>
               <sources>
-		<source>src/jvm</source>
+                <source>src/jvm</source>
               </sources>
             </configuration>
           </execution>
         </executions>
       </plugin>
       <plugin>
-	<artifactId>maven-assembly-plugin</artifactId>
+        <artifactId>maven-assembly-plugin</artifactId>
         <version>2.2</version>
-	<executions>
-	  <execution>
-	    <id>clojure-slim-jar</id>
-	    <phase>package</phase>
-	    <goals>
-	      <goal>single</goal>
-	    </goals>
-	    <configuration>
-	      <descriptors>
-		<descriptor>src/assembly/slim.xml</descriptor>
-	      </descriptors>
-	      <archive>
-		<manifest>
-		  <mainClass>clojure.main</mainClass>
-		</manifest>
-	      </archive>
-	    </configuration>
-	  </execution>
-	</executions>
+        <executions>
+          <execution>
+            <id>clojure-slim-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assembly/slim.xml</descriptor>
+              </descriptors>
+              <archive>
+                <manifest>
+                  <mainClass>clojure.main</mainClass>
+                </manifest>
+              </archive>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
-	<artifactId>maven-jar-plugin</artifactId>
-	<version>2.3.1</version>
-	<configuration>
-	  <archive>
-	    <manifest>
-	      <mainClass>clojure.main</mainClass>
-	    </manifest>
-	  </archive>
-	</configuration>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.3.1</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>clojure.main</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
       </plugin>
       <plugin>
-	<artifactId>maven-source-plugin</artifactId>
-	<version>2.1.2</version>
-	<executions>
-	  <execution>
-	    <id>attach-sources</id>
-	    <phase>package</phase>
-	    <goals>
-	      <goal>jar</goal>
-	    </goals>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.1.2</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
             <configuration>
               <excludes>
                 <exclude>clojure/version.properties</exclude>
               </excludes>
             </configuration>
-	  </execution>
-	</executions>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
-	<!-- do not push SCM changes to upstream repository;
-	     prevents pushing tags/commits for failed releases;
-	     instead, push SCM changes in Hudson configuration -->
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-release-plugin</artifactId>
-	<version>2.4.1</version>
-	<configuration>
-	  <pushChanges>false</pushChanges>
-	  <localCheckout>true</localCheckout>
-	</configuration>
+        <!-- do not push SCM changes to upstream repository;
+             prevents pushing tags/commits for failed releases;
+             instead, push SCM changes in Hudson configuration -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.4.1</version>
+        <configuration>
+          <pushChanges>false</pushChanges>
+          <localCheckout>true</localCheckout>
+        </configuration>
       </plugin>
       <plugin>
-	<!-- disable the Surefire testing plugin -->
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-surefire-plugin</artifactId>
-	<version>2.6</version>
-	<configuration>
-	  <skip>true</skip>
-	</configuration>
+        <!-- disable the Surefire testing plugin -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
       </plugin>
 
       <!-- deploy artifacts to sonatype -->
@@ -270,27 +277,27 @@
       <!-- "mvn -Pdistribution package" builds a .zip file -->
       <id>distribution</id>
       <build>
-	<plugins>
-	  <plugin>
-	    <artifactId>maven-assembly-plugin</artifactId>
-	    <version>2.2</version>
-	    <executions>
-	      <execution>
-		<id>clojure-distribution</id>
-		<phase>package</phase>
-		<goals>
-		  <goal>single</goal>
-		</goals>
-		<configuration>
-		  <appendAssemblyId>false</appendAssemblyId>
-		  <descriptors>
-		    <descriptor>src/assembly/distribution.xml</descriptor>
-		  </descriptors>
-		</configuration>
-	      </execution>
-	    </executions>
-	  </plugin>
-	</plugins>
+        <plugins>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>2.2</version>
+            <executions>
+              <execution>
+                <id>clojure-distribution</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <configuration>
+                  <appendAssemblyId>false</appendAssemblyId>
+                  <descriptors>
+                    <descriptor>src/assembly/distribution.xml</descriptor>
+                  </descriptors>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
       </build>
     </profile>
     <profile>
@@ -348,8 +355,8 @@
                       <mainClass>clojure.main</mainClass>
                     </transformer>
                   </transformers>
-		  <outputFile>clojure.jar</outputFile>
-		</configuration>
+                  <outputFile>clojure.jar</outputFile>
+                </configuration>
               </execution>
             </executions>
           </plugin>
