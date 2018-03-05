@@ -10,10 +10,7 @@
 
 package clojure.lang;
 
-public class TaggedLiteral implements ILookup {
-
-public static final Keyword TAG_KW = Keyword.intern("tag");
-public static final Keyword FORM_KW = Keyword.intern("form");
+public class TaggedLiteral extends ATaggedLiteral {
 
 public final Symbol tag;
 public final Object form;
@@ -27,23 +24,18 @@ private TaggedLiteral(Symbol tag, Object form){
 	this.form = form;
 }
 
-public Object valAt(Object key) {
-	return valAt(key, null);
+public Symbol getTag() {
+    return this.tag;
 }
 
-public Object valAt(Object key, Object notFound) {
-	if (FORM_KW.equals(key)) {
-		return this.form;
-	} else if (TAG_KW.equals(key)) {
-		return this.tag;
-	} else {
-		return notFound;
-	}
+public Object getForm() {
+    return this.form;
 }
 
 @Override
 public boolean equals(Object o) {
 	if (this == o) return true;
+	// FIXME: what of other ITaggedLiterals?
 	if (o == null || getClass() != o.getClass()) return false;
 
 	TaggedLiteral that = (TaggedLiteral) o;
@@ -52,13 +44,6 @@ public boolean equals(Object o) {
 	if (tag != null ? !tag.equals(that.tag) : that.tag != null) return false;
 
 	return true;
-}
-
-@Override
-public int hashCode() {
-	int result = Util.hash(tag);
-	result = 31 * result + Util.hash(form);
-	return result;
 }
 
 }

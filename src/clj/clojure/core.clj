@@ -7655,7 +7655,7 @@
   "Return true if the value is the data representation of a tagged literal"
   {:added "1.7"}
   [value]
-  (instance? clojure.lang.TaggedLiteral value))
+  (instance? clojure.lang.ITaggedLiteral value))
 
 (defn tagged-literal
   "Construct a data representation of a tagged literal from a

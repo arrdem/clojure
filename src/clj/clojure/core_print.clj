@@ -533,7 +533,7 @@
 (defmethod print-method Throwable [^Throwable o ^Writer w]
   (print-throwable o w))
 
-(defmethod print-method clojure.lang.TaggedLiteral [o ^Writer w]
+(defmethod print-method clojure.lang.ITaggedLiteral [o ^Writer w]
   (.write w "#")
   (print-method (:tag o) w)
   (.write w " ")
