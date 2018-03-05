@@ -1028,12 +1028,11 @@ static public abstract class HostExpr implements Expr, MaybePrimitiveExpr{
 	}
 
 	public static Class maybeClass(Object form, boolean stringOk) {
-		if(form instanceof Class){
+		if(form instanceof Class)
 			return (Class) form;
 		Class c = null;
-		if(form instanceof Symbol)
-			{
-			Symbol sym = (Symbol) form;
+		if(form instanceof Symbol) {
+      Symbol sym = (Symbol) form;
 			if(sym.ns == null) //if ns-qualified can't be classname
 				{
 				if(Util.equals(sym,COMPILE_STUB_SYM.get()))
