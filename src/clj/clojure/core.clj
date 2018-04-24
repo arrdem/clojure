@@ -5783,11 +5783,20 @@
 (defmacro defonce
   "defs name to have the root value of the expr iff the named var has no root value,
   else expr is unevaluated"
-  {:added "1.0"}
-  [name expr]
-  `(let [v# (def ~name)]
-     (when-not (.hasRoot v#)
-       (def ~name ~expr))))
+  {:added "1.0"
+   :arglists '([name doc? meta? expr])}
+  [name & args]
+  (let [[args expr] [(butlast args) (last args)]
+        [args doc?] (if (string? (first args))
+                      [(rest args) (first args)]
+                      [args nil])
+        [args meta?] (if (map? (first args))
+                       [(rest args) (first args)]
+                       [args nil])]
+    (assert (not args) "Got unsupported arguments!")
+    `(let [v# (def ~(with-meta name (merge (when doc? {:doc doc?}) meta?)))]
+       (when-not (.hasRoot v#)
+         (def ~name ~expr)))))
 
 ;;;;;;;;;;; require/use/load, contributed by Stephen C. Gilardi ;;;;;;;;;;;;;;;;;;
 
