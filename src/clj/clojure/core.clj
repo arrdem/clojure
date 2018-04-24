@@ -5793,8 +5793,7 @@
         [args meta?] (if (map? (first args))
                        [(rest args) (first args)]
                        [args nil])]
-    (assert (not args) "Got unsupported arguments!")
-    `(let [v# (def ~(with-meta name (merge (when doc? {:doc doc?}) meta?)))]
+    `(let [v# (def ~(vary-meta name merge meta? (when doc? {:doc doc?})))]
        (when-not (.hasRoot v#)
          (def ~name ~expr)))))
 
