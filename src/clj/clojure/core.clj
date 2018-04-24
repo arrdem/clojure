@@ -5799,20 +5799,17 @@
 
 ;;;;;;;;;;; require/use/load, contributed by Stephen C. Gilardi ;;;;;;;;;;;;;;;;;;
 
-(defonce ^:dynamic
-  ^{:private true
-     :doc "A ref to a sorted set of symbols representing loaded libs"}
-  *loaded-libs* (ref (sorted-set)))
+(defonce ^:dynamic ^:private *loaded-libs*
+  "A ref to a sorted set of symbols representing loaded libs"
+  (ref (sorted-set)))
 
-(defonce ^:dynamic
-  ^{:private true
-     :doc "A stack of paths currently being loaded by this thread"}
-  *pending-paths* ())
+(defonce ^:dynamic ^:private *pending-paths*
+  "A stack of paths currently being loaded by this thread"
+  ())
 
-(defonce ^:dynamic
-  ^{:private true :doc
-     "True while a verbose load is pending"}
-  *loading-verbosely* false)
+(defonce ^:dynamic ^:private *loading-verbosely*
+  "True while a verbose load is pending"
+  false)
 
 (defn- throw-if
   "Throws a CompilerException with a message if pred is true"
